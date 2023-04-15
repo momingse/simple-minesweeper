@@ -5,24 +5,28 @@ body {
 }
 .clear {
   clear: both;
-  content: ""
 }
 
 .game {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
-  /* text-align: center; */
+  text-align: center;
 }
 
 .game-info {
+  margin: auto;
+  display: flex;
   min-height: 50px;
+  justify-content: space-between;
 }
 
 .cell {
-  background: #fff;
   border: 1px solid #414c69;
-  float: left;
+  background: #fff;
+  /* float: left; */
+  display: inline-block;
+  vertical-align: top;
   line-height: 20px;
   height: 20px;
   text-align: center;
@@ -30,6 +34,7 @@ body {
   cursor: pointer;
   user-select: none;
 }
+
 
 .cell:focus {
   outline: none;

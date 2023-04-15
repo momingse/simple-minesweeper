@@ -5,6 +5,42 @@ const Board = (props) => {
   const [board, setBoard] = React.useState(null);
   const [gameStatus, setGameStatus] = React.useState("Playing");
   const [mineCount, setMineCount] = React.useState(props.gameInformation.mines);
+  const [time, setTime] = React.useState(0);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (gameStatus !== "Playing") {
+        return;
+      }
+      const timer = time + 1;
+      setTime(timer);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [time]);
+
+  useEffect(() => {
+    setBoard(
+      initBoard(
+        props.gameInformation.rows,
+        props.gameInformation.columns,
+        props.gameInformation.mines
+      )
+    );
+    // console.log("create board");
+  }, [props.gameInformation]);
+
+  const handleRestart = () => {
+    setBoard(
+      initBoard(
+        props.gameInformation.rows,
+        props.gameInformation.columns,
+        props.gameInformation.mines
+      )
+    );
+    setMineCount(props.gameInformation.mines);
+    setGameStatus("Playing");
+    setTime(0);
+  };
 
   const createEmptyArray = (height, width) => {
     let board = [];
@@ -243,39 +279,33 @@ const Board = (props) => {
     }
   };
 
-  useEffect(() => {
-    setBoard(
-      initBoard(
-        props.gameInformation.rows,
-        props.gameInformation.columns,
-        props.gameInformation.mines
-      )
-    );
-    // console.log("create board");
-  }, [props.gameInformation]);
-
   return (
     <div className="board">
-      <div className="game-info">
+      <div
+        className="game-info"
+        style={{
+          width: `${props.gameInformation.columns * 20}px`,
+        }}
+      >
         <span className="mine-count">{mineCount}</span>
-        <br />
-        <span className="game-status">{gameStatus}</span>
+        <span className="game-status" onClick={handleRestart}>
+          {gameStatus}
+        </span>
+        <span className="timer">{time}</span>
       </div>
       <div className="playground">
         {board &&
           board.map((dataRow) => {
             return dataRow.map((dataItem) => {
               return (
-                <div
-                  key={dataItem.x * dataRow.length + dataItem.y}
-                  className={dataRow[0] === dataItem ? "clear" : ""}
-                >
+                <React.Fragment key={dataItem.x * dataRow.length + dataItem.y}>
                   <Cell
                     onClick={(e) => handleCellClick(e, dataItem.x, dataItem.y)}
                     cMenu={(e) => handleContextMenu(e, dataItem.x, dataItem.y)}
                     value={dataItem}
                   />
-                </div>
+                  {dataItem === dataRow[dataRow.length - 1] && <br />}
+                </React.Fragment>
               );
             });
           })}
