@@ -6,17 +6,18 @@ const Board = (props) => {
   const [gameStatus, setGameStatus] = React.useState("Playing");
   const [mineCount, setMineCount] = React.useState(props.gameInformation.mines);
   const [time, setTime] = React.useState(0);
+  const [inGame, setInGame] = React.useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (gameStatus !== "Playing") {
+      if (!inGame) {
         return;
       }
       const timer = time + 1;
       setTime(timer);
     }, 1000);
     return () => clearTimeout(timeout);
-  }, [time]);
+  }, [time, inGame]);
 
   useEffect(() => {
     setBoard(
@@ -40,6 +41,7 @@ const Board = (props) => {
     setMineCount(props.gameInformation.mines);
     setGameStatus("Playing");
     setTime(0);
+    setInGame(false);
   };
 
   const createEmptyArray = (height, width) => {
@@ -182,7 +184,7 @@ const Board = (props) => {
         }
       })
     );
-    console.log(win);
+    // console.log(win);
     return win;
   };
 
@@ -217,6 +219,10 @@ const Board = (props) => {
   };
 
   const handleCellClick = (e, x, y) => {
+    console.log("click", inGame);
+    if (!inGame) {
+      setInGame(true);
+    }
     // console.log(board[x][y]);
     if (board[x][y].isFlaged) {
       return;
@@ -232,6 +238,7 @@ const Board = (props) => {
       // console.log("You Lose");
       setGameStatus("You Lose");
       revealBoard();
+      setInGame(false);
       return;
     }
 
@@ -246,6 +253,7 @@ const Board = (props) => {
     if (checkWin(updatedBoard)) {
       setGameStatus("You Win");
       revealBoard();
+      setInGame(false);
       return;
     }
 
@@ -276,6 +284,7 @@ const Board = (props) => {
     setBoard(updatedBoard);
     if (win) {
       setGameStatus("You Win");
+      setInGame(false);
     }
   };
 
