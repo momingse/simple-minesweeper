@@ -65,25 +65,6 @@ export class Minesweeper {
     return allLocation.slice(0, this._numberOfmines);
   }
 
-  private getNeighbors(x: number, y: number): [number, number][] {
-    const neighbors: [number, number][] = [];
-    for (
-      let i = Math.max(0, x - 1);
-      i <= Math.min(this._width - 1, x + 1);
-      i++
-    ) {
-      for (
-        let j = Math.max(0, y - 1);
-        j <= Math.min(this._height - 1, y + 1);
-        j++
-      ) {
-        if (i === x && j === y) continue;
-        neighbors.push([i, j]);
-      }
-    }
-    return neighbors;
-  }
-
   private initializeBoard(): void {
     this._board = Array.from({ length: this._height }, () =>
       Array.from({ length: this._width }, () => ({
@@ -100,6 +81,25 @@ export class Minesweeper {
         }
       });
     });
+  }
+
+  public getNeighbors(x: number, y: number): [number, number][] {
+    const neighbors: [number, number][] = [];
+    for (
+      let i = Math.max(0, x - 1);
+      i <= Math.min(this._width - 1, x + 1);
+      i++
+    ) {
+      for (
+        let j = Math.max(0, y - 1);
+        j <= Math.min(this._height - 1, y + 1);
+        j++
+      ) {
+        if (i === x && j === y) continue;
+        neighbors.push([i, j]);
+      }
+    }
+    return neighbors;
   }
 
   public reset(): void {
@@ -231,14 +231,14 @@ export class Minesweeper {
       return;
     }
 
-    if (this.checkWin()) {
-      this._gameState = GameStatus.Win;
-      return;
-    }
-
     this._numberOfrevealed += 1;
     if (this._board[y][x].value === 0) {
       this.recursiveReveal(x, y);
+    }
+
+    if (this.checkWin()) {
+      this._gameState = GameStatus.Win;
+      return;
     }
   }
 }
